@@ -5,7 +5,6 @@ import type { RegisterFormData } from "../../types/auth";
 import { RegisterUser } from "../../api/auth.api";
 
 import "./register.css";
-// form control k liye formik and validation k liye yup
 
 const Register = () => {
   const [message, setMessage] = useState("");
