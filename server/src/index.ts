@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db"
 
+// import routes
+import userRoutes from "./routes/auth.routes"
+
 // connect to MongoDB
 connectDB();
 
@@ -18,10 +21,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
-// Basic Route
-app.get('/', (req, res) => {
-  res.send('Server is running smoothly');
-});
+// User routes
+app.use("/api/user", userRoutes)
 
 
 app.listen(PORT, () => {
