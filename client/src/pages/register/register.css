@@ -40,10 +40,6 @@
   }
 }
 
-.already-have-account p a {
-  text-decoration: none;
-}
-
-.already-have-account p a:hover {
-  color: rgb(255, 255, 255);
+.already-have-account {
+  display: flex;
 }

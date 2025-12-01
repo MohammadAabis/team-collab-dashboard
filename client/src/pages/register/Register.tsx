@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import type { RegisterFormData } from "../../types/auth";
+import { RegisterUser } from "../../api/auth.api";
+
 import "./register.css";
 // form control k liye formik and validation k liye yup
-
-type RegisterFormData = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  address: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-};
 
 const Register = () => {
   const [message, setMessage] = useState("");
@@ -23,7 +16,6 @@ const Register = () => {
   } = useForm<RegisterFormData>();
 
   const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
     if (
       !data.first_name ||
       !data.last_name ||
@@ -43,14 +35,21 @@ const Register = () => {
         setTimeout(function () {
           setMessage("");
         }, 3000);
+      } else {
+        RegisterUser(data)
+          .then((resp) => {
+            setMessage(resp.message);
+            setTimeout(() => {
+              setMessage("")
+            }, 3000);
+          })
+          .catch((error) => {
+            setMessage(error.response.data.message);
+            setTimeout(() => {
+              setMessage("")
+            }, 3000);
+          });
       }
-      //   else {
-      //     Signup(formData).then((res) => {
-      //       setMessage(res.data.msg);
-      //       setTimeout(function () {
-      //         setMessage("");
-      //       }, 3000);
-      //     });
     }
   };
 
@@ -77,7 +76,7 @@ const Register = () => {
 
         <label>Email</label>
         <input
-          className={`${errors.email ? "errorInput" : ""}`}
+          className={`${errors.email ? "input-error" : ""}`}
           {...register("email", {
             required: "Email is required",
             pattern: {
@@ -89,7 +88,7 @@ const Register = () => {
         />
 
         <label>Address</label>
-        <textarea rows={3}  {...register("address")} />
+        <textarea rows={3} {...register("address")} placeholder="Address" />
 
         <label>Phone Number</label>
         <input
@@ -97,6 +96,7 @@ const Register = () => {
           {...register("phone")}
           pattern="^[0-9]{10,15}$"
           required
+          placeholder="0323-1234567"
         />
 
         <label>Password</label>
@@ -124,9 +124,8 @@ const Register = () => {
         </div>
 
         <div className="already-have-account">
-          <p>
-            Already have an account? <a href="/login">Sign in</a>
-          </p>
+          <p>Already have an account?</p>
+          <a href="/login">&nbsp; Sign in</a>
         </div>
       </form>
     </div>
