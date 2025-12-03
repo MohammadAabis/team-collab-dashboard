@@ -14,7 +14,7 @@ export const authMiddleware = async (
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       id: string;
     };
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(decoded.id).select("-password"); // Excluding password field.
     if (!user) throw new Error("User not found");
     req.user = user; //Stores authenticated user info on the request and Makes it available to ALL routes after middleware
     next();

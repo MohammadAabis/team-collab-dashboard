@@ -2,7 +2,10 @@ import bcrypt from "bcryptjs";
 
 import User from "../models/User.model";
 import { RegisterUser } from "../models/User.model";
-import { generateToken } from "../utils/generateToken";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generateToken";
 
 export const register = async (data: RegisterUser) => {
   const exists = await User.findOne({ email: data.email });
@@ -27,10 +30,13 @@ export const login = async (email: string, password: string) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new Error("Invalid credentials");
 
-  const token = generateToken(String(user._id));
+  const accessToken = generateAccessToken(String(user._id));
+  const refreshToken = generateRefreshToken(String(user._id));
 
   return {
     message: "Login successful",
-    user: {id: user._id, email: user.email, token}
-  }
+    user: { id: user._id, email: user.email },
+    accessToken,
+    refreshToken,
+  };
 };
