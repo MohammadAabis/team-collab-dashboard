@@ -1,0 +1,320 @@
+/* ============================= */
+/* CSS RESET (Modern Normalize)  */
+/* ============================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* ============================= */
+/* COLOR VARIABLES               */
+/* ============================= */
+:root {
+  /* Primary Theme Colors */
+  --primary: #38b0ac;
+  --primary-dark: #37a29e;
+  --primary-light: #6ff0f5;
+  --primary-bg: #eff6ff;
+
+  /* Neutral Colors */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-color: #5e9ced;
+  --bg-color: #f8fafc;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Status Colors */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --error: #dc2626;
+  --error-light: #fee2e2;
+}
+
+/* ============================= */
+/* DARK MODE THEME              */
+/* ============================= */
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-dark: #1e3a8a;
+  --primary-light: #60a5fa;
+  --primary-bg: #1e293b;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+
+  --border-color: #e2e8f0;
+  --bg-color: #0f172a;
+  --white: #1e293b;
+  --black: #ffffff;
+
+  --success: #22c55e;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --error-light: #7f1d1d;
+}
+
+/* TYPOGRAPHY                   */
+*/
+/* ============================= */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+}
+h2 {
+  font-size: 1.875rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.25rem;
+}
+h5 {
+  font-size: 1.125rem;
+}
+h6 {
+  font-size: 1rem;
+}
+
+p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Anchor Tags */
+a {
+  color: rgb(71, 86, 217);
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(88, 56, 182);
+  text-decoration: underline;
+}
+
+/* ============================= */
+/* BUTTONS                      */
+/* ============================= */
+button,
+.btn {
+  height: 40px;
+  padding: 0.6rem 2rem;
+  margin: 10px 0px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-danger {
+  background: var(--error);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Disabled Button */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================= */
+/* FORMS & INPUTS               */
+/* ============================= */
+input,
+textarea,
+select {
+  background: var(--white);
+  color: var(--text-primary);
+  height: 40px;
+  line-height: 70px;
+  border: 20px;
+  padding: 0.6rem;
+  margin-left: 5px;
+  transition: border 0.2s ease;
+  margin-bottom: 20px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border: 2px solid var(--border-color);
+}
+
+label {
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 0px 5px;
+  text-align: start;
+}
+
+/* Error State */
+.input-error {
+  border-color: var(--error) !important;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+/* ============================= */
+/* CARD COMPONENT               */
+/* ============================= */
+.card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================= */
+/* UTILITIES                    */
+/* ============================= */
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.mt-3 {
+  margin-top: 1rem;
+}
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+.mb-3 {
+  margin-bottom: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+/* ============================= */
+/* RESPONSIVE HELPERS           */
+/* ============================= */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 1rem;
+}
+
+/* ****************************Media Query************************** */
+
+/* Media query for smaller screens  */
+
+/* Small Devices (tablets, 576px to 767px) */
+@media (max-width: 767px) {
+  .login-content {
+    width: 80%;
+  }
+  .login-button {
+    width: 150px;
+  }
+  .input {
+    width: 80%;
+  }
+}
+
+/* Medium Devices (tablets, 768px to 991px) */
+@media (min-width: 767px) and (max-width: 991px) {
+  .login-content {
+    width: 30%;
+  }
+  .login-button {
+    width: 150px;
+  }
+  .input {
+    width: 100%;
+  }
+}
+
+/* Large Devices (desktops, 992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .login-content {
+    width: 30%;
+  }
+}
+
+/* ********************************************************* */
