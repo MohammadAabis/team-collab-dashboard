@@ -19,7 +19,6 @@ const Login = () => {
   } = useForm<LoginData>();
 
   const onSubmit = (data: LoginData) => {
-    console.log(data);
     if (!data.email || !data.password) {
       setMessage("Please fill all required fields!");
       setTimeout(() => {
