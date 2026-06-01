@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import * as AuthService from "../services/auth.service";
-import { generateAccessToken } from "../utils/generateToken";
+import { generateAccessToken, generateRefreshToken, hashToken } from "../utils/generateToken";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -35,10 +35,10 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async(req: Request, res: Response) =>{
-  try {
-    const token = req.cookies.refreshToken;
-    if(!token) throw new Error("No refresh token privided");
+  const token = req.cookies.refreshToken;
+  if(!token) throw new Error("No refresh token privided");
 
+  try {
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string) as {id: string};
     const accessToken =  generateAccessToken(decoded.id);
 
@@ -52,3 +52,10 @@ export const logout = async(req: Request, res: Response) =>{
   res.clearCookie("refreshToken");
   return res.json({mesage: "Logged out successfully"})
 }
+
+// Protected route example — verifies token is working
+// export const getProfile = async ( req: Request, res: Response ) => {
+//   return res.status(200).json({
+//     user: req.user,
+//   });
+// };
