@@ -5,6 +5,7 @@ import { RegisterUser } from "../models/User.model";
 import {
   generateAccessToken,
   generateRefreshToken,
+  hashToken,
 } from "../utils/generateToken";
 
 export const register = async (data: RegisterUser) => {
@@ -32,6 +33,10 @@ export const login = async (email: string, password: string) => {
   
   const accessToken = generateAccessToken(String(user._id));
   const refreshToken = generateRefreshToken(String(user._id));
+
+  const hashedRefreshToken = await hashToken(refreshToken);
+  user.refreshToken = hashedRefreshToken;
+  await user.save();
 
   return {
     message: "Login successful",
