@@ -29,7 +29,7 @@ export const login = async (email: string, password: string) => {
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new Error("Invalid credentials");
-
+  
   const accessToken = generateAccessToken(String(user._id));
   const refreshToken = generateRefreshToken(String(user._id));
 
