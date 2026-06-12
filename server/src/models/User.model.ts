@@ -7,6 +7,7 @@ export interface RegisterUser extends Document {
   address: string;
   phone: string;
   password: string;
+  refreshToken?: string;
 }
 
 const userSchema = new Schema<RegisterUser>(
@@ -17,6 +18,7 @@ const userSchema = new Schema<RegisterUser>(
     address: { type: String },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    refreshToken: { type: String },
   },
   { timestamps: true }
 );
