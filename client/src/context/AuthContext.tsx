@@ -1,115 +1,125 @@
-// // Global auth store (Memory storage for access token)
-// import axios from "axios";
-
-
-// import { useState, useEffect, useContext, createContext } from "react";
-// // import { setupAxiosInterceptors } from "../api/axiosClient";
-
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import axiosClient from "../api/axiosClient";
+import { logoutUser, refreshToken } from "../api/auth.api";
 
 type User = {
   id: string;
-  emaiil: string;
+  email: string;
 };
 
-// type AuthContextType = {
-//     user: User | null;
-//     accessToken: string | null;
-//     login:(token:string, user: User) => void;
-//     logout:() => void;
-//     loading: boolean;
-// }
+interface AuthContextType {
+  accessToken: string | null;
+  user: User | null;
+  isLoading: boolean;
+  login: (token: string, user: User) => void;
+  logout: () => Promise<void>;
+  setAccessToken: (token: string | null) => void;
+  setUser: (user: User | null) => void;
+}
 
-// const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-// export const AuthProvider = ({children}: {children: React.ReactNode}) =>{
-//     const [user, setUser] = useState<User | null>(null);
-//     const [accessToken, setAccessToken] = useState<string | null>(null);
-//     const [loading, setLoading] = useState(true);
-
-
-//  // 1️⃣ Try to restore session on page reload
-//   const tryRefresh = async () => {
-//     try {
-//       const res = await axios.get("/auth/refresh", { withCredentials: true });
-
-//       setAccessToken(res.data.accessToken);
-
-//       // Optional: call /auth/me to get user info  
-//     //   const me = await axios.get("/auth/me", {
-//     //     headers: { Authorization: `Bearer ${res.data.accessToken}` },
-//     //   });
-
-//     //   setUser(me.data.user);
-//     } catch (err) {
-//       setUser(null);
-//       setAccessToken(null);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Run once on page load
-//   useEffect(() => {
-//     tryRefresh();
-//   }, []);
-
-
-//     const login = (token: string, userData: User) =>{
-//         setAccessToken(token); //stored in memory
-//         setUser(userData);
-//     }
-
-//     const logout = () =>{
-//         setAccessToken(null);
-//         setUser(null)
-//     }
-
-//     return (
-//         <AuthContext.Provider value={{user, accessToken, login, logout, loading}}>
-//             {children}
-//         </AuthContext.Provider>
-//     )
-// }
-
-// export const useAuth = () => useContext(AuthContext)!;
-
-import { createContext, useState, useEffect } from "react";
-import { setAccessToken } from "../utils/tokenMemory";
-import axios from "../api/axiosClient";
-
-export const AuthContext = createContext<any>(null);
-
-export const AuthProvider = ({ children }:{children: React.ReactNode}) => {
+export const AuthProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // On page refresh → ask server for new access token
-  useEffect(() => {
-    const refresh = async () => {
-      try {
-        const { data } = await axios.get("/auth/refresh");
-        setAccessToken(data.accessToken);
-        setUser(data.user);
-      } catch (err) {
-        setUser(null);
-      }
-    };
-    refresh();
-  }, []);
-
-  const login = async (token: string, userData: User) => {
+  // Login: store token + user in state
+  const login = useCallback((token: string, userData: User) => {
     setAccessToken(token);
     setUser(userData);
-  };
+  }, []);
 
-  const logout = async () => {
-    // await axios.post("/auth/logout");
-    setAccessToken("");
-    setUser(null);
-  };
+  // Logout: call server, then clear state
+  const logout = useCallback(async () => {
+    try {
+      await logoutUser();
+    } finally {
+      setAccessToken(null);
+      setUser(null);
+    }
+  }, []);
+
+  // Attach access token to every outgoing request
+  useEffect(() => {
+    const requestInterceptor = axiosClient.interceptors.request.use(
+      (config) => {
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return config;
+      }
+    );
+
+    return () => {
+      axiosClient.interceptors.request.eject(requestInterceptor);
+    };
+  }, [accessToken]);
+
+  // Wire up the refresh callback so the interceptor can update our state
+  useEffect(() => {
+    (axiosClient as any)._onTokenRefreshed = (
+      newToken: string | null,
+      newUser: User | null
+    ) => {
+      setAccessToken(newToken);
+      setUser(newUser);
+    };
+
+    return () => {
+      (axiosClient as any)._onTokenRefreshed = null;
+    };
+  }, []);
+
+  // On page load / refresh: attempt silent token refresh
+  useEffect(() => {
+    const silentRefresh = async () => {
+      try {
+        const data = await refreshToken();
+        setAccessToken(data.accessToken);
+        setUser(data.user);
+      } catch {
+        // No valid refresh token — user must log in
+        setAccessToken(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    silentRefresh();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        accessToken,
+        user,
+        isLoading,
+        login,
+        logout,
+        setAccessToken,
+        setUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
+};
+
+export { AuthContext };
